@@ -23,10 +23,10 @@ export const productValidation = (product : {title : string , description : stri
     const errors : { title : string , description : string, 
         imageURL : string ,price : string } 
      = {
-        title : "NOT VALID PRODUCT TITLE",
-        description : "NOT VALID PRODUCT DESCRIPTION",
-        imageURL : "NOT VALID PRODUCT IMAGE URL",
-        price : "NOT VALID PRODUCT PRICE",
+       title: "",
+       description: "",
+       imageURL: "",
+       price: "",
     }
 
 const validUrl = /^(ftp|http|https):\/\/[^ "]+$/.test(product.imageURL);

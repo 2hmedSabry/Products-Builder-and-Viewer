@@ -7,6 +7,7 @@ import Button from "./components/Button";
 import Input from "./components/ui/Input";
 import { IProduct } from "./interface";
 import { productValidation } from "./validation";
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
   /* ------- State  ------- */
@@ -22,7 +23,7 @@ const App = () => {
     },
   });
   const [isOpen, setIsOpen] = useState(true);
-
+const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: "" , price: ""})
   /* ------- Handler  ------- */
   const openModal = () => {
     setIsOpen(true);
@@ -37,6 +38,12 @@ const App = () => {
       ...product,
       [name]: value,
     });
+
+    setErrors({
+      ...errors,
+      [name]: "",
+    })
+
   };
 
   const oncancel = () => {
@@ -60,18 +67,15 @@ const App = () => {
     const { title, description, imageURL, price } = product;
     const errors = productValidation({ title, description, imageURL, price });
     console.log(errors);
-
-    console.log(errors);
     // ** check if any property has a value of "" && check if any property has a value of "
-    const thasErrors =
+    const hasErrors =
       Object.values(errors).some((value) => value === "") &&
-      Object.values(errors).some(
-        (value) => value === "NOT VALID PRODUCT TITLE"
-      );
-      if (!thasErrors) {
+      Object.values(errors).every((value) => value === "");
+      if (!hasErrors) {
+        setErrors(errors);
         return;
       }
-    console.log(thasErrors);
+    console.log("SEND THIS PRODUCT TO THE SERVER");
   };
 
   /* ------- Render  ------- */
@@ -91,6 +95,7 @@ const App = () => {
           value={product[input.name]}
           onChange={onCHangeHandler}
         />
+      <ErrorMessage msg={errors[input.name]} />
       </div>
     );
   });
