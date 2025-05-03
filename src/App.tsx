@@ -1,6 +1,6 @@
 import "./App.css";
 import ProductCard from "./components/ProductCard";
-import { formInputsList, productsList } from "./data";
+import { colors, formInputsList, productsList } from "./data";
 import Modal from "./components/ui/Modal";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Button from "./components/Button";
@@ -8,22 +8,34 @@ import Input from "./components/ui/Input";
 import { IProduct } from "./interface";
 import { productValidation } from "./validation";
 import ErrorMessage from "./components/ErrorMessage";
+import CricleColor from "./components/ui/CricleColor";
+import {v4 as uuidv4} from 'uuid';
 
 const App = () => {
-  /* ------- State  ------- */
-  const [product, setProduct] = useState<IProduct>({
+  const defaultProductObj: IProduct = {
     title: "",
     description: "",
     imageURL: "",
     price: "",
-    color: [],
+    colors: [],
     category: {
       name: "",
       imageURL: "",
     },
+  }
+  
+  /* ------- State  ------- */
+  const [products, setProducts] = useState<IProduct[]>(productsList);
+  const [product, setProduct] = useState<IProduct>(defaultProductObj);
+  const [isOpen, setIsOpen] = useState(false);
+  const [errors, setErrors] = useState({
+    title: "",
+    description: "",
+    imageURL: "",
+    price: "",
   });
-  const [isOpen, setIsOpen] = useState(true);
-const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: "" , price: ""})
+  const [tempColors, setTempColors] = useState<string[]>([]);
+
   /* ------- Handler  ------- */
   const openModal = () => {
     setIsOpen(true);
@@ -42,22 +54,11 @@ const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: 
     setErrors({
       ...errors,
       [name]: "",
-    })
-
+    });
   };
 
   const oncancel = () => {
-    setProduct({
-      title: "",
-      description: "",
-      imageURL: "",
-      price: "",
-      color: [],
-      category: {
-        name: "",
-        imageURL: "",
-      },
-    });
+    setProduct(defaultProductObj);
 
     setIsOpen(false);
   };
@@ -71,18 +72,40 @@ const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: 
     const hasErrors =
       Object.values(errors).some((value) => value === "") &&
       Object.values(errors).every((value) => value === "");
-      if (!hasErrors) {
-        setErrors(errors);
-        return;
-      }
+    if (!hasErrors) {
+      setErrors(errors);
+      return;
+    }
+
+
+    setProducts((prev) => [
+      {
+        ...product,
+        id: uuidv4(),
+        colors: tempColors,
+        category: {
+          name: product.category.name,
+          imageURL: product.category.imageURL,
+        },
+      },
+      
+      
+      ...prev 
+      ])
+
+      setProduct(defaultProductObj);
+      setTempColors([]);
+      closeModal();
+
     console.log("SEND THIS PRODUCT TO THE SERVER");
   };
 
   /* ------- Render  ------- */
-  const renderProductList = productsList.map((product) => {
+  const renderProductList = products.map((product) => {
     return <ProductCard key={product.id} product={product} />;
   });
-  const renderFormInputs = formInputsList.map((input) => {
+
+  const renderFormInputsList = formInputsList.map((input) => {
     return (
       <div className="flex flex-col" key={input.id}>
         <label htmlFor={input.id} className="mb-[2px]">
@@ -95,8 +118,24 @@ const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: 
           value={product[input.name]}
           onChange={onCHangeHandler}
         />
-      <ErrorMessage msg={errors[input.name]} />
+        <ErrorMessage msg={errors[input.name]} />
       </div>
+    );
+  });
+
+  const renderProductColors = colors.map((color) => {
+    return (
+      <CricleColor
+        key={color}
+        color={color}
+        onClick={() => {
+          if (tempColors.includes(color)) {
+            setTempColors((prev) => prev.filter((c) => c !== color));
+            return;
+          }
+          setTempColors((prev) => [...prev, color]);
+        }}
+      />
     );
   });
 
@@ -117,8 +156,22 @@ const [errors , setErrors] = useState({title:  "" , description: "" , imageURL: 
           title="ADD A NEW PRTODUCT"
         >
           <form className="space-y-3" onSubmit={submitHandler}>
-            {renderFormInputs}
+            {renderFormInputsList}
 
+            <div className="flex items-center space-x-1">
+              {renderProductColors}
+            </div>
+            <div className="flex flex-wrap items-center space-x-1">
+              {tempColors.map((color) => (
+                <span
+                  key={color}
+                  className="mb-1 p-1 mr-1 text-xs rounded-md text-white"
+                  style={{ backgroundColor: color }}
+                >
+                  {color}
+                </span>
+              ))}
+            </div>
             <div className="space-x-3">
               <Button
                 className={"bg-indigo-700 hover:bg-indigo-800 w-40"}

@@ -4,7 +4,7 @@ alt: string;
 className?: string;
 }
 
-const Image = ({imageURL, alt, className} : IProps) => {
+const Image = ({imageURL , alt, className} : IProps) => {
   return (
     <img src={imageURL} alt={alt} className={className} />
   )

@@ -1,3 +1,4 @@
+// type IProps = React.InputHTMLAttributes<HTMLInputElement>
 interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = ({...rest} : IProps) => {
@@ -11,4 +12,5 @@ const Input = ({...rest} : IProps) => {
 } 
 
 export default Input
+
 

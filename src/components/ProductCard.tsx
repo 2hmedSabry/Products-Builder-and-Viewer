@@ -2,35 +2,52 @@ import { IProduct } from "../interface";
 import { txtSLicer } from "../utils/functions";
 import Button from "./Button";
 import Image from "./Image";
+import CricleColor from "./ui/CricleColor";
 
 interface IProps {
   product: IProduct;
 }
 
 const ProductCard = ({
-  product: { title, description, imageURL, price, color, category },
+  product: { title, description, imageURL, price, colors, category },
 }: IProps) => {
   // const {title , description , imageURL , price , color , category} = product
+
+
+  const renderProductColors = colors.map((color) => {
+    return (
+      <CricleColor
+        key={color}
+        color={color}
+       
+      />
+    );
+  });
+
+
+
   return (
     <div className="max-w-sm md:max-w-lg mx-auto md:mx-0 border rounded-md p-2 flex flex-col ">
       <Image imageURL={imageURL} className="logo" alt={title} />
       <h3>{title}</h3>
       <p>{txtSLicer(description, 50)}</p>
       <div className="flex items-center my-4 space-x-2">
-        {color.map((color) => (
-          <span
-            key={color}
-            className={`w-5 h-5 bg-${color}-500 rounded-full cursor-pointer`}
-          />
-        ))}
+        {
+        renderProductColors
+        
+        
+
+        
+        
+        }
       </div>
 
       <div className="flex items-center justify-between ">
         <span>{price}</span>
         <span className="flex items-center space-x-2">
           <Image
-            imageURL={category.imageURL}
-            alt={category.name}
+            imageURL={category.imageURL = "https://placehold.co/600x400"}
+            alt={category.name ="category"}
             className="w-5 h-5 rounded-full"
           />
           <span>{category.name}</span>
