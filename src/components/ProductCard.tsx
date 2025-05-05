@@ -6,16 +6,22 @@ import CricleColor from "./ui/CricleColor";
 
 interface IProps {
   product: IProduct;
+  setProductToEdit: (product: IProduct) => void;
+  openEditModal: (value: boolean) => void;
+  idx : number;
+  setProductToEditIdx : (value: number) => void;
 }
 
-const ProductCard = ({
-  product: { title, description, imageURL, price, colors, category },
-}: IProps) => {
-  // const {title , description , imageURL , price , color , category} = product
+const ProductCard = ({product , setProductToEdit, openEditModal, setProductToEditIdx , idx}: IProps) => {
+
+  const {title , description , imageURL , price , colors , category} = product
 
 
+
+
+/* ---------- Render ---------- */
   const renderProductColors = colors.map((color) => {
-    return (
+    return (  
       <CricleColor
         key={color}
         color={color}
@@ -23,7 +29,17 @@ const ProductCard = ({
       />
     );
   });
+/* ---------- Handler ---------- */
+  const onEdit = () => {
+    console.log("edit");
+    setProductToEdit(product);
+    openEditModal(true);
+    setProductToEditIdx(idx);
+  };
 
+  const onDelete = () => {
+    console.log("Delete");
+  };
 
 
   return (
@@ -35,35 +51,29 @@ const ProductCard = ({
         {
         renderProductColors
         
-        
 
-        
-        
         }
       </div>
-
       <div className="flex items-center justify-between ">
         <span>{price}</span>
         <span className="flex items-center space-x-2">
+          <span>{category.name}</span>
           <Image
-            imageURL={category.imageURL = "https://placehold.co/600x400"}
-            alt={category.name ="category"}
+            imageURL={category.imageURL}
+            alt={category.name }
             className="w-5 h-5 rounded-full"
           />
-          <span>{category.name}</span>
         </span>
       </div>
       <div className="flex items-center justify-between space-x-2 mt-5">
         <Button
           className="bg-indigo-700"
-          onClick={() => {
-            console.log("edit");
-          }}
+          onClick={onEdit}
           width="w-full"
         >
           Edit
         </Button>
-        <Button className="bg-red-700 p-2 w-full">Delete</Button>
+        <Button className="bg-red-700 p-2 w-full" onClick={onDelete}>Delete</Button>
       </div>
     </div>
   );
